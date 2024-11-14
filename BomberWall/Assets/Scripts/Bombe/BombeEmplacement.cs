@@ -1,10 +1,10 @@
+using NaughtyAttributes;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class BombeEmplacement : MonoBehaviour
 {
-    [SerializeField]
-    private List<SpriteRenderer> _listNode = new List<SpriteRenderer>();
+    public List<SpriteRenderer> _listNode = new List<SpriteRenderer>();
 
     public static BombeEmplacement Instance;
 
@@ -27,5 +27,50 @@ public class BombeEmplacement : MonoBehaviour
         Object.transform.position = _listNode[index].transform.position;
         Object.SetActive(true);
         //Pool.Instance._stack.Push(Object); //puis on le remet à la fin
+    }
+
+
+    [Button("Set up node")]
+    public void SetUpNode()
+    {
+        for (int i = 0; i <= _listNode.Count - 1; i++)
+        {
+            if (!_listNode[i].GetComponent<Node>())
+            {
+                _listNode[i].gameObject.AddComponent<Node>();
+            }
+        }
+
+        for (int i = 0; i <= _listNode.Count - 1; i++)
+        {
+            for (int j = 0; j <= _listNode.Count - 1; j++)
+            {
+                if ((_listNode[i].transform.position - _listNode[j].transform.position).magnitude <= 1.05 && _listNode[i] != _listNode[j] && !_listNode[i].GetComponent<Node>()._listNodesVoisin.Contains(_listNode[j].GetComponent<Node>()))
+                {
+                    _listNode[i].GetComponent<Node>()._listNodesVoisin.Add(_listNode[j].GetComponent<Node>());
+                }
+            }
+        }
+    }
+
+    [Button("aled j'en ai marre")]
+
+    public void ResetNode()
+    {
+        for (int i = 0; i <= _listNode.Count - 1; i++)
+        {
+            DestroyImmediate(_listNode[i].gameObject.GetComponent<Node>());
+        }
+    }
+
+    [Button("Je met des noms correct pour mes nodes de merde")]
+    public void AAAAAAAAAAAAAAAAAAAAAAAAaaaaaaaaaaaaaaaaaaaaaaaah()
+    {
+        int count = 1;
+        foreach (SpriteRenderer node in _listNode)
+        {
+            node.name = "Node " + "(" + count + ")";
+            count++;
+        }
     }
 }
