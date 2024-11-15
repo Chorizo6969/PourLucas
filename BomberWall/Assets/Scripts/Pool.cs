@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,6 +11,7 @@ public class Pool : MonoBehaviour
     public Stack<GameObject> _stack = new();
 
     public static Pool Instance;
+
 
     private void Awake()
     {

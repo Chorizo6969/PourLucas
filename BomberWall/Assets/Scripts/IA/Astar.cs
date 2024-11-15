@@ -7,6 +7,8 @@ using UnityEngine.Assertions;
 
 public class Astar : MonoBehaviour
 {
+    public static Astar Instance;
+
     [Dropdown("NodesList")]
     public GameObject DefaultStartNode;
 
@@ -21,8 +23,7 @@ public class Astar : MonoBehaviour
     [SerializeField]
     private Node _nodeDepart;
 
-    [SerializeField]
-    private Node _nodeFin;
+    public Node _nodeFin;
 
     public List<Node> _closeNode = new();
     public List<Node> _openNode = new();
@@ -31,18 +32,49 @@ public class Astar : MonoBehaviour
 
     public int tkt = 0;
 
+    private void Awake()
+    {
+        Instance = this;
+    }
+
     private void Start()
     {
-        _nodeDepart = DefaultStartNode.GetComponent<Node>();
+        /*_nodeDepart = DefaultStartNode.GetComponent<Node>();
         _nodeFin = DefaultEndNode.GetComponent<Node>();
 
         MoveToTarget(DefaultEndNode.gameObject);
-        _nodeDepart = DefaultStartNode.GetComponent<Node>();
+        _nodeDepart = DefaultStartNode.GetComponent<Node>();*/
 
     }
 
+    public void GetNearestWaypoint()
+    {
+        
+        foreach (GameObject node in NodesList)
+        {
+            if ((transform.position - node.transform.position).magnitude < 0.01f)
+            {
+                //Debug.Log("start node " + node.name);
+                _nodeDepart = node.GetComponent<Node>();
+            }
+        }
+    }
+
+    public void GetEndPoint(GameObject targetObject)
+    {
+        foreach (GameObject node in NodesList)
+        {
+            if ((targetObject.transform.position - node.transform.position).magnitude < 0.01f)
+            {
+                //Debug.Log("End node " + node.name);
+                _nodeFin = node.GetComponent<Node>();
+            }
+        }
+    }
+
     public void MoveToTarget(GameObject nodeToGo)
-    { 
+    {
+        
 
         SetPointToGo(nodeToGo);
 
@@ -52,7 +84,7 @@ public class Astar : MonoBehaviour
 
         while (_closeNode[_closeNode.Count - 1]._hCost > 0.5f /*|| _security <= 9*/) // Tant que nous sommes pas arrivé
         {
-            if (tkt > 50)
+            if (tkt > 100)
             {
                 //EditorApplication.isPlaying = false;
                 Debug.LogError("Urgent Break From a While Loop");
@@ -80,16 +112,22 @@ public class Astar : MonoBehaviour
 
             }
 
+            if (tkt == 210) //arrete l'éxécution du script à une boucle précise
+            {
+                Debug.Log(tkt);
+            }
+
+
             if (tempoFCost == 0) //Pour éviter de remettre à 0
             {
                 tempoFCost = _openNode[0]._fCost;
                 //nodeWithLowCost = _openNode[0];
-                nodeWithLowCost = ReturnClosestPointFromTargetThatIsNotInCloseNodeList();
             }
+            nodeWithLowCost = ReturnClosestPointFromTargetThatIsNotInCloseNodeList();
 
             tempoFCost = _openNode[0]._fCost;
 
-            foreach (Node node in _openNode) //Pour chaque node ouvert on va chercher celui avec le meilleur f
+            /*foreach (Node node in _openNode) //Pour chaque node ouvert on va chercher celui avec le meilleur f
             {
                 if (node._listNodesVoisin.Contains(_nodeDepart))//est un voisin de _nodeDepart
                 {
@@ -99,9 +137,10 @@ public class Astar : MonoBehaviour
                         nodeWithLowCost = node;
                     }
                 }
-            }
+            }*/
 
-            Debug.Log(nodeWithLowCost + " " + nodeWithLowCost._fCost);
+            //Debug.Log(nodeWithLowCost + " " + nodeWithLowCost._fCost + " " + tkt);
+
             if (!_closeNode.Contains(nodeWithLowCost))
             {
                 _closeNode.Add(nodeWithLowCost); //On ajoute le meilleur a la liste des fermés
@@ -113,6 +152,7 @@ public class Astar : MonoBehaviour
             _security++;
         }
         Debug.Log("Arrivé");//Problème : Duplicata des éléments dans les listes + il faut que dans le foreach on compare que les éléments voisins du dernier ajout de _closeNode
+        StartCoroutine(IaController.Instance.IaMoveToTargetPoint());
     }
 
     public void SetPointToGo(GameObject PointToGo)
@@ -149,13 +189,14 @@ public class Astar : MonoBehaviour
 
     public Node ReturnClosestPointFromTargetThatIsNotInCloseNodeList()
     {
-        Node realClosestPoint = null;
+        Node realClosestPoint;
         foreach (Node node in _openNode)
         {
-            if (_closeNode.Contains(node)) return null;
-
-            realClosestPoint = node;
-            return realClosestPoint;
+            if (!_closeNode.Contains(node))
+            {
+                realClosestPoint = node;
+                return realClosestPoint;
+            }
         }
         Debug.LogError("Aled");
         return null;

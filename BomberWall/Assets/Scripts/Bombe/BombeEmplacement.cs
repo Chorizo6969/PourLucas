@@ -1,4 +1,5 @@
 using NaughtyAttributes;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,6 +8,8 @@ public class BombeEmplacement : MonoBehaviour
     public List<SpriteRenderer> _listNode = new List<SpriteRenderer>();
 
     public static BombeEmplacement Instance;
+
+    public event Action<GameObject> OnBombSpawn;
 
     private void Awake()
     {
@@ -21,11 +24,15 @@ public class BombeEmplacement : MonoBehaviour
 
     public void ChoseBombEmplacement()
     {
-        int index = Random.Range(0, _listNode.Count);
+        int index = UnityEngine.Random.Range(0, _listNode.Count);
         Debug.Log(index);
         GameObject Object = Pool.Instance._stack.Pop(); //On le sort de la pile
         Object.transform.position = _listNode[index].transform.position;
         Object.SetActive(true);
+        Debug.Log(OnBombSpawn);
+        Debug.Log(Object);
+        OnBombSpawn?.Invoke(Object);
+
         //Pool.Instance._stack.Push(Object); //puis on le remet à la fin
     }
 
