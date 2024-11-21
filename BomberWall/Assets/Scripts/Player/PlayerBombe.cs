@@ -1,11 +1,21 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class PlayerBombe : MonoBehaviour
 {
+    public static PlayerBombe Instance;
+
     bool hasBomb = false;
     [SerializeField] GameObject bomb;
+
+    public event Action<GameObject> OnTakeBomb;
+
+    private void Awake()
+    {
+        Instance = this;
+    }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -16,12 +26,9 @@ public class PlayerBombe : MonoBehaviour
             bomb = collision.gameObject;
             hasBomb = true;
             collision.gameObject.SetActive(false);
+
+            OnTakeBomb?.Invoke(bomb);
         }
-    }
-
-    public void DropBomb()
-    {
-
     }
 
     public void OnDropBomb(InputAction.CallbackContext callbackContext)

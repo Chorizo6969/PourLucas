@@ -1,5 +1,8 @@
 using NaughtyAttributes;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using Unity.VisualScripting;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class Astar : MonoBehaviour
@@ -14,84 +17,134 @@ public class Astar : MonoBehaviour
 
     public List<GameObject> NodesList;
 
-    private int _security = 0;
+    public Node _nodeDepart;
 
-    [SerializeField]
-    private Node _nodeDepart;
-
-
-
+    public Node _endNode;
 
     public List<List<Node>> PathList = new();
-    public List<Node> ActiveList = new();
+
+    public Stack<Node> ActiveList = new();
+
+    public Node _activeNode;
+
+    public int ReflectionDelay;
+
+    public List<Node> _closeNode = new();
+    public List<Node> _openNode = new();
 
 
-
-
-    private List<Node> _closeNode = new();
-    private List<Node> _openNode = new();
-
-    private int _gCost = 1;
-
-    private void Start()
+    private void Awake()
     {
-        MoveToTarget();
+        Instance = this;
     }
 
-    public void MoveToTarget()
+    public async void MoveToTarget(Node endNode)
     {
-        float tempoFCost = 0; //Initialise les variables
-        Node nodeWithLowCost = _nodeDepart; //Peu importe
+        Debug.Log("START ASTAR");
 
-        //--------------------------DÉBUT DE L'ALGO----------------------------------------------------------------------------------------------
+        _nodeDepart = ClosestNode(this.gameObject);
 
-        _closeNode.Add(_nodeDepart); //On ferme le node de départ
+        ActiveList.Clear();
+        _openNode.Clear();
+        _closeNode.Clear();
 
-        while (/*_closeNode[_closeNode.Count - 1]._hCost > 0.5f ||*/ _security <= 9) // Tant que nous sommes pas arrivé
+        _endNode = endNode;
+
+        foreach(GameObject node in NodesList)
         {
-            _nodeDepart = _closeNode[_closeNode.Count - 1];
+            node.GetComponent<SpriteRenderer>().color = Color.white;
+        }
 
-            foreach (Node node in _closeNode)
+        SetUpNodeCost();
+
+        _activeNode = _nodeDepart;
+
+        int secureCount = 0;
+
+        while (_activeNode != _endNode)
+        {
+
+            await Task.Delay(ReflectionDelay);
+
+
+            if (secureCount == 1000)
             {
-                node._isOpen = false;
+                Debug.LogError("Sécurité");
+                return;
             }
-            _nodeDepart._isOpen = true;
 
-            foreach (Node node in _nodeDepart._listNodesVoisin) //pour tous ses voisins
+            _activeNode.GetComponent<SpriteRenderer>().color = Color.red;
+
+
+            _closeNode.Add(_activeNode);
+            _openNode.Remove(_activeNode);
+
+            foreach (Node node in _activeNode._listNodesVoisin)
             {
-                if (!_openNode.Contains(node))
+                if (!_openNode.Contains(node) && !_closeNode.Contains(node))
                 {
-                    _openNode.Add(node); //On l'ouvre
-                    node._fCost = _gCost + node._hCost; // on calcule leurs f Cost
+                    _openNode.Add(node);
+
+                    node.GetComponent<SpriteRenderer>().color = Color.blue;
+
+                    node.NodeThatOpenedThisNode = _activeNode;
+                    node._gCost = node.NodeThatOpenedThisNode._gCost + 1;
+                    node._fCost = node._gCost + node._hCost;
                 }
-
             }
 
-            if (tempoFCost == 0) //Pour éviter de remettre à 0
+            if (_openNode.Count >= 0)
             {
-                tempoFCost = _openNode[0]._fCost;
-                nodeWithLowCost = _openNode[0];
-            }
-
-            tempoFCost = _openNode[0]._fCost;
-
-            foreach (Node node in _openNode) //Pour chaque node ouvert on va chercher celui avec le meilleur f
-            {
-                if (node._listNodesVoisin.Contains(_nodeDepart))//est un voisin de _nodeDepart
+                Node tempoClosestNode = _openNode[0];
+                float tempoCost = tempoClosestNode._fCost;
+                foreach (Node node in _openNode)
                 {
-                    if (tempoFCost > node._fCost)
+                    if (node._fCost <= tempoCost)
                     {
-                        tempoFCost = node._fCost;
-                        nodeWithLowCost = node;
+                        tempoClosestNode = node;
                     }
                 }
+
+                _activeNode = tempoClosestNode;
             }
 
-            Debug.Log(nodeWithLowCost);
-            _closeNode.Add(nodeWithLowCost); //On ajoute le meilleur a la liste des fermés
-            _gCost++;
-            _security++;
+            secureCount++;
         }
-        Debug.Log("Arrivé");
+
+        Node tempoNode = _endNode;
+        while (tempoNode != _nodeDepart)
+        {
+            tempoNode.GetComponent<SpriteRenderer>().color = Color.black;
+            ActiveList.Push(tempoNode);
+            tempoNode = tempoNode.NodeThatOpenedThisNode;
+        }
+
+
+
+        _activeNode.GetComponent<SpriteRenderer>().color = Color.green;
+        Debug.Log("trouvé ?");
+        GetComponent<IaController>().IaMoveToTargetPoint();
+    }
+
+    public void SetUpNodeCost()
+    {
+        foreach(GameObject node in NodesList)
+        {
+            node.GetComponent<Node>()._pointArrivé = _endNode;
+            node.GetComponent<Node>().SetCost();
+        }
+    }
+
+    public Node ClosestNode(GameObject myObject)
+    {
+        GameObject tempoNode = NodesList[0];
+        foreach (GameObject node in NodesList)
+        {
+            if((myObject.transform.position -  node.transform.position).magnitude < 0.001f)
+            {
+                tempoNode = node;
+            }
+        }
+        return tempoNode.GetComponent<Node>();
     }
 }

@@ -5,23 +5,25 @@ public class Node : MonoBehaviour
 {
     public List<Node> _listNodesVoisin = new List<Node>();
     
-    public GameObject _pointArrivé;
+    public Node _pointArrivé;
 
     public float _hCost;
+    public float _gCost;
     public float _fCost;
-
-    public bool _isVisited;
-    public bool _isOpen;
 
     public bool _isGood;
 
+    public Node NodeThatOpenedThisNode;
+
+    /// <summary>
+    /// calcul le hCost par rapport au point d'arrivé
+    /// </summary>
     public void SetCost()
     {
         _hCost = (gameObject.transform.position - _pointArrivé.transform.position).magnitude;
     }
-    //Il faut que chaque node connaisse la distance par rapport à l'arrivée
-    //2 listes, 1 de liste de node parcourue,
 
+    //dessine un gizmo pour vérifier que les listes de voisins sont faite correctement
     private void OnDrawGizmos()
     {
         if (_listNodesVoisin.Count > 0)

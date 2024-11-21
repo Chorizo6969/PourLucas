@@ -11,6 +11,8 @@ public class BombeEmplacement : MonoBehaviour
 
     public event Action<GameObject> OnBombSpawn;
 
+    [SerializeField] private int bombOnMap;
+
     private void Awake()
     {
         Instance = this;
@@ -18,25 +20,26 @@ public class BombeEmplacement : MonoBehaviour
 
     private void Start()
     {
-        ChoseBombEmplacement();
-        ChoseBombEmplacement();
+        for (int i = 0; i < bombOnMap; i++)
+        {
+            ChoseBombEmplacement();
+        }
     }
 
     public void ChoseBombEmplacement()
     {
         int index = UnityEngine.Random.Range(0, _listNode.Count);
-        Debug.Log(index);
         GameObject Object = Pool.Instance._stack.Pop(); //On le sort de la pile
         Object.transform.position = _listNode[index].transform.position;
+        Object.GetComponent<Bomb>().CanBeTake = true;
         Object.SetActive(true);
-        Debug.Log(OnBombSpawn);
-        Debug.Log(Object);
         OnBombSpawn?.Invoke(Object);
-
-        //Pool.Instance._stack.Push(Object); //puis on le remet à la fin
     }
 
+    
+    //Fonctions Naughty Attributes
 
+    //ajoute à chaque node de la liste global des nodes le composant Node et fais les listes de voison de chaque node
     [Button("Set up node")]
     public void SetUpNode()
     {
@@ -60,8 +63,8 @@ public class BombeEmplacement : MonoBehaviour
         }
     }
 
-    [Button("aled j'en ai marre")]
-
+    //Reset chaque node de la liste
+    [Button("Node Reset")]
     public void ResetNode()
     {
         for (int i = 0; i <= _listNode.Count - 1; i++)
@@ -70,14 +73,35 @@ public class BombeEmplacement : MonoBehaviour
         }
     }
 
+    //change les noms des node afin qu'on puisse mieux se repérer que s'ils s'appellent tous WayPoint
     [Button("Je met des noms correct pour mes nodes de merde")]
-    public void AAAAAAAAAAAAAAAAAAAAAAAAaaaaaaaaaaaaaaaaaaaaaaaah()
+    public void ChangeName()
     {
         int count = 1;
         foreach (SpriteRenderer node in _listNode)
         {
             node.name = "Node " + "(" + count + ")";
             count++;
+        }
+    }
+
+    //Desactive le sprite Renderer des node 
+    [Button("Unactive Sprite Renderer")]
+    public void Unactive()
+    {
+        foreach (SpriteRenderer node in _listNode)
+        {
+            node.gameObject.GetComponent<SpriteRenderer>().enabled = false;
+        }
+    }
+
+    //active le sprite Renderer des node pour rendre visible l'algorithme astar
+    [Button("Active Sprite Renderer")]
+    public void Active()
+    {
+        foreach (SpriteRenderer node in _listNode)
+        {
+            node.gameObject.GetComponent<SpriteRenderer>().enabled = true;
         }
     }
 }
