@@ -1,9 +1,6 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class IaController : MonoBehaviour
 {
@@ -113,8 +110,6 @@ public class IaController : MonoBehaviour
             DropBomb();
         }
 
-        //_astar.NodesList[Random.Range(0, _astar.NodesList.Count-1)].GetComponent<Node>()
-
         if (hasBomb)
         {
             await Task.Delay(250);
@@ -153,7 +148,7 @@ public class IaController : MonoBehaviour
         bomb.GetComponent<Bomb>().CanBeTake = false;
         bomb.transform.position = transform.position;
         bomb.SetActive(true);
-        bomb.GetComponent<Bomb>().Drop();
+        bomb.GetComponent<Bomb>().Explode();
         hasBomb = false;
         bomb = null;
     }

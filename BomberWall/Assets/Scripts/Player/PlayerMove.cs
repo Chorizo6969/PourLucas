@@ -6,6 +6,10 @@ public class PlayerMove : MonoBehaviour
     private Vector2 _inputMovement;
     private bool _canMove = true;
 
+    /// <summary>
+    /// Déplacement du joueur
+    /// </summary>
+    /// <param name="callbackContext"></param>
     public void OnMove(InputAction.CallbackContext callbackContext)
     {
         _inputMovement = callbackContext.ReadValue<Vector2>();
@@ -16,6 +20,12 @@ public class PlayerMove : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Gère les collision du joueur avec le mur afin qu'il ne clip pas à travers
+    /// </summary>
+    /// <param name="startPos">Position de départ</param>
+    /// <param name="distance">Distance de déplacement</param>
+    /// <param name="direction">direction du déplacement</param>
     void DetectHit(Vector3 startPos, float distance, Vector3 direction)
     {
         RaycastHit2D hit;

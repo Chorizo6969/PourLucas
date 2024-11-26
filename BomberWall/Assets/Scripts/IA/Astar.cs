@@ -1,8 +1,6 @@
 using NaughtyAttributes;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Unity.VisualScripting;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class Astar : MonoBehaviour
@@ -38,6 +36,10 @@ public class Astar : MonoBehaviour
         Instance = this;
     }
 
+    /// <summary>
+    /// Trouve le chemin le pluus court de la position du joueur à un point d'arriver
+    /// </summary>
+    /// <param name="endNode">Node d'arriver que le AStar doit trouver</param>
     public async void MoveToTarget(Node endNode)
     {
         Debug.Log("START ASTAR");
@@ -126,6 +128,9 @@ public class Astar : MonoBehaviour
         GetComponent<IaController>().IaMoveToTargetPoint();
     }
 
+    /// <summary>
+    /// actualise le Node cible de tous les Nodes et actualise le cout
+    /// </summary>
     public void SetUpNodeCost()
     {
         foreach(GameObject node in NodesList)
@@ -135,6 +140,11 @@ public class Astar : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// renvoie le Node sur lequel est un objet
+    /// </summary>
+    /// <param name="myObject">Object dont on veut récupérer le node en dessous</param>
+    /// <returns>Node le plus proche de l'objet en parametre</returns>
     public Node ClosestNode(GameObject myObject)
     {
         GameObject tempoNode = NodesList[0];

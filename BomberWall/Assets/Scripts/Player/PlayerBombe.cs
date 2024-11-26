@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -31,6 +30,10 @@ public class PlayerBombe : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Quand le joueur drop sa bombe
+    /// </summary>
+    /// <param name="callbackContext"></param>
     public void OnDropBomb(InputAction.CallbackContext callbackContext)
     {
         if (callbackContext.started && bomb != null)
@@ -38,7 +41,7 @@ public class PlayerBombe : MonoBehaviour
             bomb.GetComponent<Bomb>().CanBeTake = false;
             bomb.transform.position = transform.position;
             bomb.SetActive(true);
-            bomb.GetComponent<Bomb>().Drop();
+            bomb.GetComponent<Bomb>().Explode();
             hasBomb = false;
             bomb = null;
         }

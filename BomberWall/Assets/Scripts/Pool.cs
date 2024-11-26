@@ -19,7 +19,7 @@ public class Pool : MonoBehaviour
     private void Start()
     {
         _stack.Clear();
-        for (int i = 0; i < 10; i++) //On crée 30 préfab (par défaut ils sont désactivé).
+        for (int i = 0; i < 10; i++) //On crée 10 préfab (pour avoir de la marge au cas où) (par défaut ils sont désactivé).
         {
             GameObject newPrefab = Instantiate(_bombe);
             newPrefab.transform.parent = transform; //on range

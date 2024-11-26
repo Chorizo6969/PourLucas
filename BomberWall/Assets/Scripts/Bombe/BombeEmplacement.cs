@@ -20,12 +20,15 @@ public class BombeEmplacement : MonoBehaviour
 
     private void Start()
     {
-        for (int i = 0; i < bombOnMap; i++)
+        for (int i = 0; i < bombOnMap; i++) //met le nombre max de bombe sur le terrain (défini dans l'inspecteur)
         {
             ChoseBombEmplacement();
         }
     }
 
+    /// <summary>
+    /// Met une bombe à une position aléatoire sur la map
+    /// </summary>
     public void ChoseBombEmplacement()
     {
         int index = UnityEngine.Random.Range(0, _listNode.Count);
