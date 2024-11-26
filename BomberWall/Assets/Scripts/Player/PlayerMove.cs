@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -5,6 +6,8 @@ public class PlayerMove : MonoBehaviour
 {
     private Vector2 _inputMovement;
     private bool _canMove = true;
+
+    public event Action PlayerMoveNotify;
 
     /// <summary>
     /// Déplacement du joueur
@@ -17,6 +20,7 @@ public class PlayerMove : MonoBehaviour
         if (callbackContext.started && _canMove)
         {
             transform.position += new Vector3(_inputMovement.x, _inputMovement.y ,0);
+            PlayerMoveNotify?.Invoke();
         }
     }
 

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -9,7 +10,7 @@ public class IaController : MonoBehaviour
     [SerializeField] private int MoveSpeed;
 
     [SerializeField] private bool hasBomb = false;
-    [SerializeField] private bool isSearchingBomb = false;
+    [SerializeField] private GameObject hasBombSprite;
 
     [SerializeField] GameObject bomb;
 
@@ -19,9 +20,12 @@ public class IaController : MonoBehaviour
 
     [SerializeField] private Node _wallNode;
 
+    public event Action IaMoveNotify;
+
     private void Awake()
     {
         Instance = this;
+        hasBombSprite.SetActive(false);
     }
 
     private void Start()
@@ -44,8 +48,6 @@ public class IaController : MonoBehaviour
         {
             _astar.ActiveList.Clear();
 
-            isSearchingBomb = true;
-            Debug.Log("J'ai une bombe laisse moi marcher");
             _astar.MoveToTarget(_astar.ClosestNode(GetClosestBomb()));
         }
         
@@ -57,12 +59,10 @@ public class IaController : MonoBehaviour
     /// <param name="targetBomb">bombe que le joueur prend</param>
     public void PlayerTakeBomb(GameObject targetBomb)
     {
-        Debug.Log("Al batard il touche aux bombes");
 
         if (bombList.Contains(targetBomb))
         {
             bombList.Remove(targetBomb);
-            Debug.Log("olala il manque une bombe dans ma liste");
             
             if (hasBomb) return;
             
@@ -94,13 +94,11 @@ public class IaController : MonoBehaviour
     /// </summary>
     public async void IaMoveToTargetPoint()
     {
-        isSearchingBomb = false;
-
-
         foreach (Node node in Astar.Instance.ActiveList)
         {
             await Task.Delay(MoveSpeed);
             transform.position = node.transform.position;
+            IaMoveNotify?.Invoke();
         }
 
         await Task.Delay(50);
@@ -134,6 +132,7 @@ public class IaController : MonoBehaviour
         {
             bomb = collision.gameObject;
             hasBomb = true;
+            hasBombSprite.SetActive(true);
             collision.gameObject.SetActive(false);
 
             bombList.Remove(collision.gameObject);
@@ -151,5 +150,6 @@ public class IaController : MonoBehaviour
         bomb.GetComponent<Bomb>().Explode();
         hasBomb = false;
         bomb = null;
+        hasBombSprite.SetActive(false);
     }
 }

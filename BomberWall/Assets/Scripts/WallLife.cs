@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class WallLife : MonoBehaviour
 {
+    [SerializeField] GameObject endPanel;
+
     [SerializeField] int life;
 
     /// <summary>
@@ -12,6 +14,7 @@ public class WallLife : MonoBehaviour
         life --;
         if (life <= 0)
         {
+            endPanel.SetActive(true);
             gameObject.SetActive(false);
         }
     }

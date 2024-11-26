@@ -11,6 +11,6 @@ public class BombSound : MonoBehaviour
 
     public void ExplosionSound()
     {
-        AudioSourceStaticRef.Instance.GetComponent<AudioSource>().PlayOneShot(_audioClip);
+        AudioSourceStaticRef.Instance.audioSource.PlayOneShot(_audioClip);
     }
 }

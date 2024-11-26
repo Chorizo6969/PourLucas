@@ -42,7 +42,6 @@ public class Astar : MonoBehaviour
     /// <param name="endNode">Node d'arriver que le AStar doit trouver</param>
     public async void MoveToTarget(Node endNode)
     {
-        Debug.Log("START ASTAR");
 
         _nodeDepart = ClosestNode(this.gameObject);
 
@@ -124,7 +123,6 @@ public class Astar : MonoBehaviour
 
 
         _activeNode.GetComponent<SpriteRenderer>().color = Color.green;
-        Debug.Log("trouvé ?");
         GetComponent<IaController>().IaMoveToTargetPoint();
     }
 

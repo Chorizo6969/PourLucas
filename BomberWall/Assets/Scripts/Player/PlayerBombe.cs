@@ -9,11 +9,14 @@ public class PlayerBombe : MonoBehaviour
     bool hasBomb = false;
     [SerializeField] GameObject bomb;
 
+    [SerializeField] GameObject hasBombSprite;
+
     public event Action<GameObject> OnTakeBomb;
 
     private void Awake()
     {
         Instance = this;
+        hasBombSprite.SetActive(false);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -24,6 +27,7 @@ public class PlayerBombe : MonoBehaviour
         {
             bomb = collision.gameObject;
             hasBomb = true;
+            hasBombSprite.SetActive(true);
             collision.gameObject.SetActive(false);
 
             OnTakeBomb?.Invoke(bomb);
@@ -43,6 +47,7 @@ public class PlayerBombe : MonoBehaviour
             bomb.SetActive(true);
             bomb.GetComponent<Bomb>().Explode();
             hasBomb = false;
+            hasBombSprite.SetActive(false);
             bomb = null;
         }
     }
