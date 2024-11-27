@@ -24,6 +24,7 @@ public class IaController : MonoBehaviour
 
     private void Awake()
     {
+        Time.timeScale = 1;
         Instance = this;
         hasBombSprite.SetActive(false);
     }

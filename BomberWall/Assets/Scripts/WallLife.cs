@@ -16,6 +16,7 @@ public class WallLife : MonoBehaviour
         {
             endPanel.SetActive(true);
             gameObject.SetActive(false);
+            Time.timeScale = 0;
         }
     }
 }

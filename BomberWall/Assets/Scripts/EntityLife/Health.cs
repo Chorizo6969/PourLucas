@@ -32,7 +32,8 @@ public class Health : MonoBehaviour
 
     public void Death()
     {
-        _Deathcanvas.SetActive(true);
+        _Deathcanvas.SetActive(true); 
+        Time.timeScale = 0;
     }
 
     public int GetCurrentHealth()
