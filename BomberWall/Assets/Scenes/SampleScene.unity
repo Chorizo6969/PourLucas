@@ -5023,7 +5023,7 @@ GameObject:
   - component: {fileID: 379961388}
   - component: {fileID: 379961387}
   - component: {fileID: 379961390}
-  m_Layer: 8
+  m_Layer: 7
   m_Name: PlayerWall
   m_TagString: wall
   m_Icon: {fileID: 0}
@@ -9131,7 +9131,7 @@ GameObject:
   - component: {fileID: 610955238}
   - component: {fileID: 610955237}
   - component: {fileID: 610955240}
-  m_Layer: 8
+  m_Layer: 7
   m_Name: MechantMur
   m_TagString: wall
   m_Icon: {fileID: 0}
